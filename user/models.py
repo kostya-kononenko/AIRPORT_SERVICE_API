@@ -39,8 +39,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     image = models.ImageField(null=True,
-                               blank=True,
-                               upload_to="images/profile/")
+                              blank=True,
+                              upload_to="images/profile/")
     date_of_birth = models.DateField(null=True, blank=True)
     username = None
     email = models.EmailField(_("email address"), unique=True)
