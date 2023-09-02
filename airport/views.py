@@ -5,6 +5,7 @@ from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 
+from .permissions import IsAdminOrIfAuthenticatedReadOnly
 from .service import (
     AirportFilter,
     RouteFilter,
@@ -50,12 +51,14 @@ class AirportViewSet(viewsets.ModelViewSet):
     serializer_class = AirportSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AirportFilter
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all().select_related("destination", "source")
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RouteFilter
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -68,12 +71,14 @@ class RouteViewSet(viewsets.ModelViewSet):
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
     queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all().select_related("airplane_type")
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AirplaneFilter
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         airplane = (
@@ -104,6 +109,7 @@ class CrewViewSet(viewsets.ModelViewSet):
     serializer_class = CrewSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = CrewFilter
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class FlightViewSet(viewsets.ModelViewSet):
@@ -115,6 +121,7 @@ class FlightViewSet(viewsets.ModelViewSet):
             ))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FlightFilter
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -136,6 +143,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = OrderFilter
     pagination_class = OrderPagination
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
@@ -155,6 +163,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 class AddStarRatingView(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = CreateRatingSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(ip=get_client_ip(self.request))
