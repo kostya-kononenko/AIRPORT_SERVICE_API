@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from django.db import models
+
 from django_filters.rest_framework import DjangoFilterBackend
 from .service import (
     AirportFilter,
@@ -7,6 +9,7 @@ from .service import (
     AirplaneFilter,
     FlightFilter,
     OrderFilter,
+    get_client_ip,
 )
 
 from airport.models import (
@@ -33,6 +36,7 @@ from airport.serializers import (
     FlightListSerializer,
     FlightDetailSerializer,
     OrderSerializer,
+    CreateRatingSerializer,
 )
 
 
@@ -63,6 +67,22 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all().select_related("airplane_type")
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AirplaneFilter
+
+    def get_queryset(self):
+        airplane = (
+            Airplane.objects.all()
+            .annotate(
+                rating_user=models.Count(
+                    "ratings", filter=models.Q(
+                        ratings__ip=get_client_ip(self.request))
+                )
+            )
+            .annotate(
+                middle_star=models.Sum(models.F("ratings__star"))
+                / models.Count(models.F("ratings"))
+            )
+        )
+        return airplane
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -105,3 +125,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class AddStarRatingView(viewsets.ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = CreateRatingSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(ip=get_client_ip(self.request))

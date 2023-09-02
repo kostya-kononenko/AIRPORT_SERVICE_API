@@ -56,6 +56,9 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
 
 
 class AirplaneSerializer(serializers.ModelSerializer):
+    rating_user = serializers.BooleanField()
+    middle_star = serializers.IntegerField()
+
     class Meta:
         model = Airplane
         fields = (
@@ -64,6 +67,8 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "rows",
             "seats_in_row",
             "airplane_type",
+            "rating_user",
+            "middle_star",
         )
 
 
@@ -155,3 +160,17 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
+
+class CreateRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ("star", "airplane", "ip")
+
+        def create(self, validate_data):
+            rating = Rating.objects.update_or_create(
+                ip=validate_data.get("ip", None),
+                airplane=validate_data.get("airplane", None),
+                defaults={"star": validate_data.get("star")},
+            )
+            return rating
