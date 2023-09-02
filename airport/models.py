@@ -92,6 +92,9 @@ class Flight(models.Model):
     class Meta:
         ordering = ["-departure_time"]
 
+    def __str__(self):
+        return f"{self.route}"
+
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -110,23 +113,30 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def clean(self):
+    @staticmethod
+    def validate_ticket(row, seat, airplane, error_to_raise):
         for ticket_attr_value, ticket_attr_name, airplane_attr_name in [
-            (self.row, "row", "rows"),
-            (self.seat, "seat", "seats_in_row"),
+            (row, "row", "rows"),
+            (seat, "seat", "seats_in_row"),
         ]:
-            count_attrs = getattr(
-                self.flight.airplane, airplane_attr_name
-            )
+            count_attrs = getattr(airplane, airplane_attr_name)
             if not (1 <= ticket_attr_value <= count_attrs):
-                raise ValidationError(
+                raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} "
-                        f"number must be in available range: "
-                        f"(1, {airplane_attr_name}): "
-                        f"(1, {count_attrs})"
+                                          f"number must be in available range: "
+                                          f"(1, {airplane_attr_name}): "
+                                          f"(1, {count_attrs})"
                     }
                 )
+
+    def clean(self):
+        Ticket.validate_ticket(
+            self.row,
+            self.seat,
+            self.flight.airplane,
+            ValidationError,
+        )
 
     def save(
         self,
@@ -147,3 +157,35 @@ class Ticket(models.Model):
 
     class Meta:
         unique_together = ("flight", "row", "seat")
+        ordering = ["row", "seat"]
+
+
+class RatingStarAirplane(models.Model):
+    value = models.PositiveSmallIntegerField("Meaning", default=0)
+
+    def __str__(self):
+        return f"{self.value}"
+
+    class Meta:
+        verbose_name = "Star rating"
+        verbose_name_plural = "Rating Stars"
+        ordering = ["-value"]
+
+
+class Rating(models.Model):
+    ip = models.CharField("IP address", max_length=15)
+    star = models.ForeignKey(RatingStarAirplane,
+                             on_delete=models.CASCADE,
+                             verbose_name="star")
+    airplane = models.ForeignKey(
+        Airplane,
+        on_delete=models.CASCADE,
+        related_name="ratings"
+    )
+
+    def __str__(self):
+        return f"{self.star} - {self.airplane}"
+
+    class Meta:
+        verbose_name = "Rating"
+        verbose_name_plural = "Ratings"

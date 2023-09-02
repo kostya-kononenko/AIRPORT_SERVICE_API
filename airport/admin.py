@@ -8,7 +8,9 @@ from airport.models import (
     AirplaneType,
     Flight,
     Order,
-    Ticket
+    Ticket,
+    Rating,
+    RatingStarAirplane
 )
 
 
@@ -58,5 +60,12 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ("flight", "order", "row", "seat")
     list_display_links = ("flight",)
 
+
+@admin.register(Rating)
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ("id", "star", "airplane")
+
+
+admin.site.register(RatingStarAirplane)
 
 admin.site.register(AirplaneType)
