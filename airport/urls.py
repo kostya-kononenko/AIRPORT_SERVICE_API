@@ -23,7 +23,6 @@ router.register("order", OrderViewSet)
 router.register("rating", AddStarRatingView)
 
 
-
 urlpatterns = router.urls
 
 app_name = "airport"

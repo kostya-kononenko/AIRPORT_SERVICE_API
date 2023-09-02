@@ -56,6 +56,21 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
 
 
 class AirplaneSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Airplane
+        fields = (
+            "id",
+            "name",
+            "rows",
+            "seats_in_row",
+            "airplane_type",
+        )
+
+
+class AirplaneListOrDetailSerializer(serializers.ModelSerializer):
+    airplane_type = AirplaneTypeSerializer(many=False,
+                                           read_only=True)
     rating_user = serializers.BooleanField()
     middle_star = serializers.IntegerField()
 
@@ -72,53 +87,10 @@ class AirplaneSerializer(serializers.ModelSerializer):
         )
 
 
-class AirplaneListOrDetailSerializer(AirplaneSerializer):
-    airplane_type = AirplaneTypeSerializer(many=False, read_only=True)
-
-
 class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
         fields = ("first_name", "last_name", "crew_position", "image")
-
-
-class FlightSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Flight
-        fields = (
-            "id",
-            "route",
-            "airplane",
-            "crew",
-            "departure_time",
-            "arrival_time",
-        )
-
-
-class FlightListSerializer(FlightSerializer):
-    route = serializers.StringRelatedField(many=False)
-    airplane = serializers.StringRelatedField(many=False)
-    crew_count = serializers.SerializerMethodField()
-
-    def get_crew_count(self, obj):
-        return obj.crew.count()
-
-    class Meta:
-        model = Flight
-        fields = (
-            "id",
-            "route",
-            "airplane",
-            "crew_count",
-            "departure_time",
-            "arrival_time",
-        )
-
-
-class FlightDetailSerializer(FlightSerializer):
-    route = RouteListOrDetailSerializer(many=False)
-    airplane = AirplaneListOrDetailSerializer(many=False)
-    crew = CrewSerializer(many=True)
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -139,6 +111,72 @@ class TicketSerializer(serializers.ModelSerializer):
             "row",
             "seat",
             "flight",
+        )
+
+
+class TicketSeatsSerializer(TicketSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat")
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route",
+            "airplane",
+            "crew",
+            "departure_time",
+            "arrival_time",
+        )
+
+
+class FlightListSerializer(FlightSerializer):
+    route = serializers.StringRelatedField(many=False)
+    airplane = serializers.StringRelatedField(many=False)
+    airplane_capacity = serializers.IntegerField(
+        source="airplane.capacity", read_only=True
+    )
+    crew_count = serializers.SerializerMethodField()
+    tickets_available = serializers.IntegerField(read_only=True)
+
+    def get_crew_count(self, obj):
+        return obj.crew.count()
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route",
+            "airplane",
+            "crew_count",
+            "departure_time",
+            "arrival_time",
+            "airplane_capacity",
+            "tickets_available",
+        )
+
+
+class FlightDetailSerializer(FlightSerializer):
+    route = RouteListOrDetailSerializer(many=False)
+    airplane = AirplaneSerializer(many=False)
+    crew = CrewSerializer(many=True)
+    taken_places = TicketSeatsSerializer(
+        source="tickets", many=True, read_only=True
+    )
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route",
+            "airplane",
+            "crew",
+            "departure_time",
+            "arrival_time",
+            "taken_places",
         )
 
 
