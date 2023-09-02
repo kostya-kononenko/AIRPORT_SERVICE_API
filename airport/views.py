@@ -1,4 +1,13 @@
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from .service import (
+    AirportFilter,
+    RouteFilter,
+    CrewFilter,
+    AirplaneFilter,
+    FlightFilter,
+    OrderFilter,
+)
 
 from airport.models import (
     Airport,
@@ -8,9 +17,9 @@ from airport.models import (
     Airplane,
     Flight,
     Order,
-    Ticket,
     RatingStarAirplane,
-    Rating)
+    Rating,
+)
 
 from airport.serializers import (
     AirportSerializer,
@@ -30,10 +39,14 @@ from airport.serializers import (
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AirportFilter
 
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all().select_related("destination", "source")
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RouteFilter
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -48,6 +61,8 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all().select_related("airplane_type")
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AirplaneFilter
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -58,10 +73,18 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CrewFilter
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.all().prefetch_related("crew").select_related("route", "airplane")
+    queryset = (
+        Flight.objects.all()
+        .prefetch_related("crew")
+        .select_related("route", "airplane")
+    )
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = FlightFilter
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -74,6 +97,8 @@ class FlightViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = OrderFilter
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

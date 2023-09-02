@@ -12,11 +12,11 @@ from airport.models import (
     Order,
     Ticket,
     RatingStarAirplane,
-    Rating)
+    Rating,
+)
 
 
 class AirportSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Airport
         fields = (
@@ -30,7 +30,6 @@ class AirportSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Route
         fields = (
@@ -75,12 +74,7 @@ class AirplaneListOrDetailSerializer(AirplaneSerializer):
 class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
-        fields = (
-            "first_name",
-            "last_name",
-            "crew_position",
-            "image"
-        )
+        fields = ("first_name", "last_name", "crew_position", "image")
 
 
 class FlightSerializer(serializers.ModelSerializer):
@@ -156,7 +150,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            tickets_data = validated_data.pop('tickets')
+            tickets_data = validated_data.pop("tickets")
             order = Order.objects.create(**validated_data)
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)

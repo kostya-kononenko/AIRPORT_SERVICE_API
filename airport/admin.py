@@ -10,7 +10,7 @@ from airport.models import (
     Order,
     Ticket,
     Rating,
-    RatingStarAirplane
+    RatingStarAirplane,
 )
 
 
@@ -52,7 +52,7 @@ class TicketInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ("created_at", "user")
-    inlines = (TicketInline, )
+    inlines = (TicketInline,)
 
 
 @admin.register(Ticket)
