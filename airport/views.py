@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from django.db import models
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
+
 from .service import (
     AirportFilter,
     RouteFilter,
@@ -21,22 +23,24 @@ from airport.models import (
     Airplane,
     Flight,
     Order,
-    RatingStarAirplane,
     Rating,
 )
 
 from airport.serializers import (
     AirportSerializer,
     RouteSerializer,
-    RouteListOrDetailSerializer,
+    RouteListSerializer,
+    RouteDetailSerializer,
     AirplaneSerializer,
-    AirplaneListOrDetailSerializer,
+    AirplaneListSerializer,
+    AirplaneDetailSerializer,
     AirplaneTypeSerializer,
     CrewSerializer,
     FlightSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
     OrderSerializer,
+    OrderListSerializer,
     CreateRatingSerializer,
 )
 
@@ -54,8 +58,10 @@ class RouteViewSet(viewsets.ModelViewSet):
     filterset_class = RouteFilter
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
-            return RouteListOrDetailSerializer
+        if self.action == "list":
+            return RouteListSerializer
+        if self.action == "retrieve":
+            return RouteDetailSerializer
         return RouteSerializer
 
 
@@ -86,8 +92,10 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         return airplane
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
-            return AirplaneListOrDetailSerializer
+        if self.action == "list":
+            return AirplaneListSerializer
+        if self.action == "retrieve":
+            return AirplaneDetailSerializer
         return AirplaneSerializer
 
 
@@ -116,17 +124,32 @@ class FlightViewSet(viewsets.ModelViewSet):
         return FlightSerializer
 
 
+class OrderPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = OrderFilter
+    pagination_class = OrderPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        queryset = self.queryset.filter(user=self.request.user)
+        if self.action == "list":
+            queryset = queryset.prefetch_related("tickets__flight__airplane")
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+        return OrderSerializer
 
 
 class AddStarRatingView(viewsets.ModelViewSet):

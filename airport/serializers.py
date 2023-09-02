@@ -11,7 +11,6 @@ from airport.models import (
     Flight,
     Order,
     Ticket,
-    RatingStarAirplane,
     Rating,
 )
 
@@ -40,7 +39,20 @@ class RouteSerializer(serializers.ModelSerializer):
         )
 
 
-class RouteListOrDetailSerializer(RouteSerializer):
+class RouteListSerializer(RouteSerializer):
+    source = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="name"
+    )
+    destination = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="name"
+    )
+
+    class Meta:
+        model = Route
+        fields = ("id", "source", "destination", "distance")
+
+
+class RouteDetailSerializer(RouteSerializer):
     source = AirportSerializer(many=False, read_only=True)
     destination = AirportSerializer(many=False, read_only=True)
 
@@ -68,7 +80,25 @@ class AirplaneSerializer(serializers.ModelSerializer):
         )
 
 
-class AirplaneListOrDetailSerializer(serializers.ModelSerializer):
+class AirplaneListSerializer(serializers.ModelSerializer):
+    airplane_type = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="name"
+    )
+    middle_star = serializers.IntegerField()
+
+    class Meta:
+        model = Airplane
+        fields = (
+            "id",
+            "name",
+            "rows",
+            "seats_in_row",
+            "airplane_type",
+            "middle_star",
+        )
+
+
+class AirplaneDetailSerializer(serializers.ModelSerializer):
     airplane_type = AirplaneTypeSerializer(many=False,
                                            read_only=True)
     rating_user = serializers.BooleanField()
@@ -160,7 +190,7 @@ class FlightListSerializer(FlightSerializer):
 
 
 class FlightDetailSerializer(FlightSerializer):
-    route = RouteListOrDetailSerializer(many=False)
+    route = RouteDetailSerializer(many=False)
     airplane = AirplaneSerializer(many=False)
     crew = CrewSerializer(many=True)
     taken_places = TicketSeatsSerializer(
@@ -178,6 +208,10 @@ class FlightDetailSerializer(FlightSerializer):
             "arrival_time",
             "taken_places",
         )
+
+
+class TicketListSerializer(TicketSerializer):
+    flight = FlightListSerializer(many=False, read_only=True)
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -198,6 +232,10 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
+
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketListSerializer(many=True, read_only=True)
 
 
 class CreateRatingSerializer(serializers.ModelSerializer):
