@@ -155,8 +155,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Blog API",
-    "DESCRIPTION": "Blog for all people",
+    "TITLE": "Airport API Service",
+    "DESCRIPTION": "Airport site",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_SETTINGS": {
