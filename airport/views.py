@@ -1,4 +1,6 @@
 from django.db.models import F, Count
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from django.db import models
 
@@ -53,6 +55,28 @@ class AirportViewSet(viewsets.ModelViewSet):
     filterset_class = AirportFilter
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "name",
+                type=OpenApiTypes.STR,
+                description="Filter by name (ex. ?name=name)",
+            ),
+            OpenApiParameter(
+                "country",
+                type=OpenApiTypes.STR,
+                description="Filter by country (ex. ?country=country)",
+            ),
+            OpenApiParameter(
+                "city",
+                type=OpenApiTypes.STR,
+                description="Filter by city (ex. ?city=city)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all().select_related("destination", "source")
@@ -66,6 +90,31 @@ class RouteViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return RouteDetailSerializer
         return RouteSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.STR,
+                description="Filter by source "
+                            "(ex. ?source=source)",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.STR,
+                description="Filter by destination "
+                            "(ex. ?destination=destination)",
+            ),
+            OpenApiParameter(
+                "distance",
+                type=OpenApiTypes.INT,
+                description="Filter by distance "
+                            "(ex. ?distance=100)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
@@ -103,6 +152,36 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             return AirplaneDetailSerializer
         return AirplaneSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "name",
+                type=OpenApiTypes.STR,
+                description="Filter by name (ex. ?name=name)",
+            ),
+            OpenApiParameter(
+                "rows",
+                type=OpenApiTypes.INT,
+                description="Filter by rows "
+                            "(ex. ?rows=10)",
+            ),
+            OpenApiParameter(
+                "seats_in_row",
+                type=OpenApiTypes.INT,
+                description="Filter by seats_in_row "
+                            "(ex. ?seats_in_row=5)",
+            ),
+            OpenApiParameter(
+                "airplane_type",
+                type=OpenApiTypes.STR,
+                description="Filter by airplane_type "
+                            "(ex. ?airplane_type=airplane_type)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
@@ -110,6 +189,19 @@ class CrewViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = CrewFilter
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "crew_position",
+                type=OpenApiTypes.STR,
+                description="Filter by crew_position "
+                            "(ex. ?crew_position=crew_position)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class FlightViewSet(viewsets.ModelViewSet):
@@ -129,6 +221,36 @@ class FlightViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return FlightDetailSerializer
         return FlightSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "route",
+                type=OpenApiTypes.STR,
+                description="Filter by route (ex. ?route=route)",
+            ),
+            OpenApiParameter(
+                "airplane",
+                type=OpenApiTypes.STR,
+                description="Filter by airplane "
+                            "(ex. ?airplane=airplane)",
+            ),
+            OpenApiParameter(
+                "departure_time",
+                type=OpenApiTypes.DATE,
+                description="Filter by departure_time "
+                            "(ex. ?departure_time=DD-MM-YYYY)",
+            ),
+            OpenApiParameter(
+                "arrival_time",
+                type=OpenApiTypes.STR,
+                description="Filter by arrival_time "
+                            "(ex. ?arrival_time=DD-MM-YYYY)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderPagination(PageNumberPagination):
@@ -158,6 +280,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return OrderListSerializer
         return OrderSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "created_at",
+                type=OpenApiTypes.STR,
+                description="Filter by created_at "
+                            "(ex. ?created_at=YYYY-MM-DD HH:MM)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AddStarRatingView(viewsets.ModelViewSet):
