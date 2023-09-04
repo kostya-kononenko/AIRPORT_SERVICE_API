@@ -43,7 +43,9 @@ def payment_successful(request):
     user_payment = UserPayment.objects.get(app_user=user_id)
     user_payment.stripe_checkout_id = checkout_session_id
     user_payment.save()
-    return render(request, "payments/payment_successful.html", {"customer": customer})
+    return render(request, "payments/"
+                           "payment_successful.html",
+                  {"customer": customer})
 
 
 def payment_cancelled(request):
@@ -62,9 +64,9 @@ def stripe_webhook(request):
         event = stripe.Webhook.construct_event(
             payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except ValueError as e:
+    except ValueError:
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
+    except stripe.error.SignatureVerificationError:
         return HttpResponse(status=400)
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
