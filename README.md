@@ -75,4 +75,4 @@ airplane, airplane type, tickets, order, ratings.
 - Get access token via: user/token
 
 ## Diagram of all models:
-![img.png](img.png)
+![airport_airplane](https://github.com/kostya-kononenko/AIRPORT_SERVICE_API/assets/107486491/0a706f16-5373-456c-8f8c-e8d25c63a6f7)
