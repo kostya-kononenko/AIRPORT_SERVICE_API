@@ -6,6 +6,7 @@ from django.db import models
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 from .service import (
@@ -265,7 +266,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = OrderFilter
     pagination_class = OrderPagination
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
@@ -298,7 +299,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 class AddStarRatingView(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = CreateRatingSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(ip=get_client_ip(self.request))
