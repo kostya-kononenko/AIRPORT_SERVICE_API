@@ -95,7 +95,7 @@ class AuthenticatedAirplaneApiTest(TestCase):
     def test_update_airplane_forbidden(self):
         airplane = sample_airplane()
         payload = {
-            "name": "new_name",
+            "name": "New name",
         }
         url = detail_url(airplane.id)
         res = self.client.patch(url, payload)
