@@ -3,21 +3,10 @@ from rest_framework.exceptions import ValidationError
 
 
 class Airport(models.Model):
-    class ClosestBigCity(models.TextChoices):
-        very_close = "very_close", "very_close"
-        close = "close", "close"
-        average_proximity = "average proximity", "average proximity"
-        far = "far", "far"
-        very_far = "very_far", "very_far"
-
     name = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
-    closest_big_city = models.CharField(
-        max_length=20,
-        choices=ClosestBigCity.choices,
-        default=ClosestBigCity.close
-    )
+    closest_big_city = models.CharField(max_length=255, default="City")
     image = models.ImageField(null=True,
                               blank=True,
                               upload_to="images/airport/")
@@ -28,10 +17,10 @@ class Airport(models.Model):
 
 class Route(models.Model):
     source = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, related_name="rout_source"
+        Airport, on_delete=models.CASCADE, related_name="source"
     )
     destination = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, related_name="rout_destination"
+        Airport, on_delete=models.CASCADE, related_name="destination"
     )
     distance = models.PositiveIntegerField(default=0)
 
@@ -41,22 +30,22 @@ class Route(models.Model):
 
 class Crew(models.Model):
     class CrewPosition(models.TextChoices):
-        captain = "captain", "captain"
-        first_mate = "first mate", "first mate"
-        flight_engineer = "flight engineer", "flight engineer"
-        onboard_systems_operator = (
+        CAPTAIN = "captain", "captain"
+        FIRST_MATE = "first mate", "first mate"
+        FLIGHT_ENGINEER = "flight engineer", "flight engineer"
+        ONBOARD_SYSTEMS_OPERATOR = (
             "onboard systems operator",
             "onboard systems operator",
         )
-        navigator = "navigator", "navigator"
-        steward = "steward", "steward"
+        NAVIGATOR = "navigator", "navigator"
+        STEWARD = "steward", "steward"
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     crew_position = models.CharField(
         max_length=25,
         choices=CrewPosition.choices,
-        default=CrewPosition.steward
+        default=CrewPosition.STEWARD
     )
     image = models.ImageField(null=True,
                               blank=True,
@@ -106,11 +95,11 @@ class Flight(models.Model):
     airplane = models.ForeignKey(
         Airplane,
         on_delete=models.CASCADE,
-        related_name="flight"
+        related_name="flights"
     )
     crew = models.ManyToManyField(
         Crew,
-        related_name="flight")
+        related_name="flights")
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
 
