@@ -89,7 +89,7 @@ class AdminAirplaneTypeApiTest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-    def test_create_airplane_success(self):
+    def test_create_airplane_type_success(self):
         payload = {
             "name": "Very new airplane",
         }
