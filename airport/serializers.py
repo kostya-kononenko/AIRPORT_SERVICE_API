@@ -85,6 +85,7 @@ class AirplaneListSerializer(serializers.ModelSerializer):
         many=False, read_only=True, slug_field="name"
     )
     middle_star = serializers.IntegerField()
+    rating_user = serializers.BooleanField()
 
     class Meta:
         model = Airplane
@@ -95,14 +96,13 @@ class AirplaneListSerializer(serializers.ModelSerializer):
             "seats_in_row",
             "airplane_type",
             "middle_star",
+            "rating_user",
         )
 
 
 class AirplaneDetailSerializer(serializers.ModelSerializer):
     airplane_type = AirplaneTypeSerializer(many=False,
                                            read_only=True)
-    rating_user = serializers.BooleanField()
-    middle_star = serializers.IntegerField()
 
     class Meta:
         model = Airplane
@@ -112,8 +112,6 @@ class AirplaneDetailSerializer(serializers.ModelSerializer):
             "rows",
             "seats_in_row",
             "airplane_type",
-            "rating_user",
-            "middle_star",
         )
 
 
