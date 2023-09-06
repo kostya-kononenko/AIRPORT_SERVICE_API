@@ -211,10 +211,10 @@ class AdminFlightApiTests(TestCase):
         )
 
         self.airplane_type = AirplaneType.objects.create(
-            name="TestAirplaneType AT28",
+            name="New AirplaneType",
         )
         self.airplane = Airplane.objects.create(
-            name="TestAirplane",
+            name="New Airplane",
             rows=50,
             seats_in_row=11,
             airplane_type=self.airplane_type
@@ -222,8 +222,8 @@ class AdminFlightApiTests(TestCase):
 
         self.crew = [
             Crew.objects.create(
-                first_name=f"Test {letter}",
-                last_name="TestLast"
+                first_name=f"First name {letter}",
+                last_name="Last name"
             )
             for letter in "abcde"
         ]
