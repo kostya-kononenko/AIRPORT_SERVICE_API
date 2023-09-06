@@ -64,6 +64,14 @@ airplane, airplane type, tickets, order, ratings.
 - The API well-documented with clear instructions on how to use each endpoint.
 - The documentation include sample API requests and responses for different endpoints.
 
+## Tests
+- You can tests next endpoint:
+  - Airport;
+  - Route;
+  - Crew;
+  - Airplane;
+  - Flight;
+
 ## How to installing using GitHub
 
 - Clone this repository
