@@ -64,6 +64,7 @@ airplane, airplane type, tickets, order, ratings.
 - The API well-documented with clear instructions on how to use each endpoint.
 - The documentation include sample API requests and responses for different endpoints.
 
+<<<<<<< HEAD
 ## Tests
 - You can tests next endpoint:
   - Airport;
@@ -72,6 +73,8 @@ airplane, airplane type, tickets, order, ratings.
   - Airplane;
   - Flight;
 
+=======
+>>>>>>> origin/main
 ## How to installing using GitHub
 
 - Clone this repository
@@ -83,4 +86,8 @@ airplane, airplane type, tickets, order, ratings.
 - Get access token via: user/token
 
 ## Diagram of all models:
+<<<<<<< HEAD
 ![img.png](img.png)
+=======
+![airport_airplane](https://github.com/kostya-kononenko/AIRPORT_SERVICE_API/assets/107486491/0a706f16-5373-456c-8f8c-e8d25c63a6f7)
+>>>>>>> origin/main
