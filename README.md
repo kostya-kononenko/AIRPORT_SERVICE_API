@@ -1,6 +1,6 @@
 # AIRPORT SERVICE API
 
-The RESTful API for a airport service platform. 
+The RESTful API for an airport service platform. 
 
 
 ## User Registration and Authentication:
@@ -15,38 +15,38 @@ The RESTful API for a airport service platform.
 
 ## Airport
 - User with admin permission can create/update/retrieve/delete airport.
-- User who is authenticated can retrieve airport.
+- User who is authenticated can retrieve the airport.
 
 ## Route
-- User with admin permission can create/update/retrieve/delete route.
-- User who is authenticated can retrieve route.
+- User with admin permission can create/update/retrieve/delete routes.
+- User who is authenticated can retrieve the route.
 
 ## Crew
 - User with admin permission can create/update/retrieve/delete crew.
 - User who is authenticated can retrieve crew.
 
 ## Airplane
-- User with admin permission can create/update/retrieve/delete airplane.
-- User who is authenticated can retrieve airplane.
-- User who is authenticated can add star (1-5) to airplane.
+- User with admin permission can create/update/retrieve/delete airplanes.
+- User who is authenticated can retrieve the airplane.
+- User who is authenticated can add a star (1-5) to the airplane.
 
 ## Airplane type
 - User with admin permission can create/update/retrieve/delete airplane type.
-- User who is authenticated can retrieve airplane type.
+- The user who is authenticated can retrieve airplane type.
 
 ## Flight
 - User with admin permission can create/update/retrieve/delete flight.
-- User who is authenticated can retrieve flight.
+- A user who is authenticated can retrieve a flight.
 
 ## Order and tickets
-- User who is authenticated can can create/update/retrieve/delete 
-order including few tickets.
+- User who is authenticated can create/update/retrieve/delete 
+order including a few tickets.
 
 ## Payment system:
-- Users can pay for order (functionality with Stripe).
+- Users can pay for orders (functionality with Stripe).
 
 ## Filtering system
-- User who is authenticated can filtering next endpoint: 
+- The user who is authenticated can filter the next endpoint: 
     - Airport (by name, country, city);
     - Route (by source, destination, distance);
     - Crew (by crew position);
@@ -55,27 +55,24 @@ order including few tickets.
     - Order (by created at).
 
 ## API Permissions:
-- Only authenticated users can perform actions such as creating order/tickets and add stars to the airplane.
+- Only authenticated users can perform actions such as creating orders/tickets and adding stars to the airplane.
 - User with admin permission can create/update/retrieve/delete user profile, airport, route, crew, flight, 
 airplane, airplane type, tickets, order, ratings.
 - Users can update their own profile.
 
 ## API Documentation:
-- The API well-documented with clear instructions on how to use each endpoint.
-- The documentation include sample API requests and responses for different endpoints.
+- The API is well-documented with clear instructions on how to use each endpoint.
+- The documentation includes sample API requests and responses for different endpoints.
 
-<<<<<<< HEAD
 ## Tests
-- You can tests next endpoint:
+- You can test the next endpoint:
   - Airport;
   - Route;
   - Crew;
   - Airplane;
   - Flight;
 
-=======
->>>>>>> origin/main
-## How to installing using GitHub
+## How to install using GitHub
 
 - Clone this repository
 - Create venv: python -m venv venv
@@ -86,8 +83,5 @@ airplane, airplane type, tickets, order, ratings.
 - Get access token via: user/token
 
 ## Diagram of all models:
-<<<<<<< HEAD
-![img.png](img.png)
-=======
+
 ![airport_airplane](https://github.com/kostya-kononenko/AIRPORT_SERVICE_API/assets/107486491/0a706f16-5373-456c-8f8c-e8d25c63a6f7)
->>>>>>> origin/main
